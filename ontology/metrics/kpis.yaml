@@ -1,0 +1,41 @@
+metrics:
+  funnel_metrics:
+    lead_magnet:
+      - total_users
+      - activated_users
+      - average_session_length
+      - questions_per_user
+      - value_moments_per_user
+      
+    let_leo_do_it:
+      - qualified_leads
+      - conversion_rate
+      - average_sale_cycle
+      - completion_rate
+      - satisfaction_score
+      
+    model_training:
+      - qualified_opportunities  
+      - proposal_conversion_rate
+      - average_contract_value
+      - time_to_close
+      - project_success_rate
+  
+  business_health:
+    revenue:
+      - mrr_from_lldi: "count * 475"
+      - revenue_from_training: "count * 10000"
+      - total_revenue
+      - revenue_per_lead
+      
+    efficiency:
+      - cac_by_stage
+      - ltv_by_segment  
+      - payback_period
+      - support_hours_per_client
+      
+    growth:
+      - month_over_month_growth
+      - cohort_retention
+      - referral_rate
+      - upsell_velocity

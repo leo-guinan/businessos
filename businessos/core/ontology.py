@@ -117,6 +117,15 @@ class Ontology(BaseModel):
             transformed_data["segments"] = {}
             for segment_name, segment_data in data["segments"].items():
                 segment_data["name"] = segment_name
+                
+                # Transform journey stages to include name field
+                if "journey_stages" in segment_data:
+                    transformed_stages = {}
+                    for stage_name, stage_data in segment_data["journey_stages"].items():
+                        stage_data["name"] = stage_name
+                        transformed_stages[stage_name] = stage_data
+                    segment_data["journey_stages"] = transformed_stages
+                
                 transformed_data["segments"][segment_name] = segment_data
         
         if "campaigns" in data:
@@ -142,8 +151,8 @@ class Ontology(BaseModel):
         
         ontology = cls()
         
-        # Load all YAML files in the directory
-        for yaml_file in directory.glob("*.yaml"):
+        # Load all YAML files in the directory and subdirectories
+        for yaml_file in directory.rglob("*.yaml"):
             try:
                 file_ontology = cls.from_file(yaml_file)
                 # Merge the ontologies

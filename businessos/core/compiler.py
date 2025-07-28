@@ -87,15 +87,19 @@ class Compiler:
             range_def = type_def[6:-1]
             min_val, max_val = range_def.split(", ")
             
-            # Handle units like K, M, B
+            # Handle units like K, M, B, %
             def parse_value(val):
                 val = val.strip()
                 if val.endswith('K'):
                     return float(val[:-1]) * 1000
                 elif val.endswith('M'):
                     return float(val[:-1]) * 1000000
+                elif val.endswith('B+'):
+                    return float(val[:-2]) * 1000000000
                 elif val.endswith('B'):
                     return float(val[:-1]) * 1000000000
+                elif val.endswith('%'):
+                    return float(val[:-1])
                 elif val.endswith('+'):
                     return float(val[:-1])
                 else:

@@ -1,78 +1,70 @@
-offerings:
-  SaaSPlatform:
-    properties:
-      name: string
-      description: string
-      category: enum["platform", "tool", "service", "integration"]
-      pricing_model: enum["subscription", "usage_based", "one_time", "freemium"]
-      target_segments: list[CustomerSegment]
-      features: list[Feature]
-      integrations: list[Integration]
-      compliance: list[enum["soc2", "hipaa", "gdpr", "fedramp"]]
-    constraints:
-      - "Enterprise offerings must have SOC2 compliance"
-      - "Healthcare offerings must have HIPAA compliance"
-      - "Freemium offerings must have clear upgrade path"
-
-  ProfessionalServices:
-    properties:
-      service_type: enum["consulting", "implementation", "training", "support"]
-      duration: enum["hours", "days", "weeks", "months"]
-      team_size: range(1, 10)
-      deliverables: list[string]
-      prerequisites: list[string]
-      success_metrics: list[KPI]
-    constraints:
-      - "Implementation services require discovery phase"
-      - "Training services must include materials"
-      - "Support services must have SLA defined"
-
-  CustomSolution:
-    properties:
-      scope: string
-      complexity: enum["simple", "medium", "complex", "enterprise"]
-      timeline: range(1, 52)
-      team_requirements: list[Role]
-      technology_stack: list[Technology]
-      maintenance_plan: MaintenancePlan
-    constraints:
-      - "Complex solutions require architecture review"
-      - "Enterprise solutions must include security review"
-      - "All solutions must have maintenance plan"
-
-# Common types
-types:
-  Feature:
-    properties:
-      name: string
-      description: string
-      category: enum["core", "advanced", "enterprise", "experimental"]
-      availability: enum["available", "beta", "coming_soon", "deprecated"]
-      dependencies: list[string]
-      documentation_url: string
-    constraints:
-      - "Beta features must have clear limitations"
-      - "Deprecated features must have migration path"
-
-  Integration:
-    properties:
-      name: string
-      type: enum["api", "webhook", "sdk", "connector"]
-      status: enum["active", "beta", "deprecated"]
-      documentation_url: string
-      rate_limits: RateLimits
-      authentication: AuthenticationMethod
-    constraints:
-      - "API integrations must have rate limits defined"
-      - "All integrations must have documentation"
-
-  MaintenancePlan:
-    properties:
-      type: enum["basic", "standard", "premium", "enterprise"]
-      response_time: enum["4h", "8h", "24h", "48h"]
-      availability: enum["business_hours", "24_7", "custom"]
-      included_services: list[string]
-      escalation_path: EscalationPath
-    constraints:
-      - "Enterprise plans must have 24/7 availability"
-      - "All plans must have escalation path defined" 
+lead_magnets:
+  LeoAsAService:
+    description: "AI system providing access to Leo's expertise"
+    value_proposition: "24/7 access to senior technical guidance"
+    delivery_method: "ai_chat_interface"
+    demonstrates:
+      - "technical_depth"
+      - "implementation_quality"
+      - "ai_architecture_innovation"
+    metrics:
+      - activation_rate
+      - questions_per_user
+      - value_moments  # "aha" interactions
+    
+core_offerings:
+  LetLeoDoIt:
+    price: 475
+    duration: "2_weeks"
+    format: "intensive_consultation"
+    
+    deliverables:
+      discovery:
+        description: "Deep dive into current system"
+        time_allocation: "20%"
+      
+      stabilization_plan:
+        description: "Actionable roadmap to stability"
+        time_allocation: "40%"
+        
+      quick_wins:
+        description: "Immediate improvements implemented"
+        time_allocation: "40%"
+    
+    success_metrics:
+      customer_reported:
+        - stability_improvement: float(0.0, 1.0)
+        - confidence_boost: float(0.0, 1.0)
+        - clarity_gained: float(0.0, 1.0)
+      
+      business_metrics:
+        - completion_rate: float(0.8, 1.0)  # target
+        - upsell_qualification: boolean
+        - nps_score: int(-100, 100)
+    
+  ModelTrainingService:
+    price: 10000
+    duration: "4-6_weeks"
+    format: "done_for_you"
+    
+    deliverables:
+      custom_model:
+        description: "Fine-tuned model for specific use case"
+        specifications:
+          - "domain_specific"
+          - "production_ready"
+          - "documented"
+      
+      deployment_support:
+        description: "Integration and go-live assistance"
+        included_hours: 10
+        
+      training_materials:
+        description: "How to maintain and update"
+        format: ["video", "documentation", "examples"]
+    
+    qualification_requirements:
+      - completed_let_leo_do_it: boolean
+      - clear_use_case: boolean
+      - data_available: boolean
+      - budget_confirmed: boolean

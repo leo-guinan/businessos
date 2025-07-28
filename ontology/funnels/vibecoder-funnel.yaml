@@ -1,0 +1,84 @@
+funnel:
+  name: "Vibecoder Stability Pipeline"
+  goal: "10 model training sales"
+  
+  stages:
+    lead_magnet:
+      asset: "LeoAsAService"
+      metrics:
+        target_monthly_users: 1000
+        target_activation_rate: 0.3  # 300 activated users
+        
+      conversion_triggers:
+        - interaction_count: ">= 5"
+        - value_moment_reached: true
+        - pain_point_expressed: ["stability", "maintenance", "scaling"]
+      
+      nurture_sequence:
+        immediate:
+          - email: "welcome_to_leo"
+          - resource: "vibecoder_stability_guide"
+        
+        day_3:
+          - email: "common_stability_mistakes"
+          - check_in: "usage_analysis"
+          
+        day_7:
+          - email: "case_study_transformation"
+          - offer: "let_leo_do_it_invitation"
+    
+    initial_offer:
+      product: "LetLeoDoIt"
+      price_point: 475
+      
+      conversion_targets:
+        from_lead_magnet: 0.1  # 10% of activated users = 30 sales
+        monthly_goal: 30
+        
+      sales_assets:
+        landing_page:
+          elements: ["urgency", "social_proof", "risk_reversal"]
+          copy_framework: "problem_agitate_solve"
+          
+        qualification_form:
+          fields:
+            - current_challenges: text
+            - project_description: text
+            - timeline: enum
+            - budget_range: enum
+            
+      objection_handling:
+        price:
+          response: "Compare to one day of downtime costs"
+          proof: "roi_calculator"
+          
+        time:
+          response: "2 weeks now saves months later"
+          proof: "timeline_comparison"
+    
+    upsell:
+      product: "ModelTrainingService"
+      price_point: 10000
+      
+      qualification_criteria:
+        - let_leo_do_it_success: true
+        - use_case_identified: true
+        - budget_available: true
+        
+      conversion_targets:
+        from_initial_offer: 0.33  # 33% of LLDI clients = 10 sales
+        absolute_goal: 10
+        
+      sales_process:
+        week_1_followup:
+          - satisfaction_check
+          - success_story_capture
+          
+        week_2_transition:
+          - future_vision_discussion
+          - model_opportunity_identification
+          
+        proposal:
+          - custom_scoped
+          - roi_projection
+          - implementation_timeline
