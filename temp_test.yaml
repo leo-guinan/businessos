@@ -1,0 +1,6 @@
+segments:
+  TestCustomer:
+    properties:
+      annual_revenue: range(100K, 10M)
+      company_size: enum["1-10", "11-50"]
+      industry: enum["technology", "healthcare"]

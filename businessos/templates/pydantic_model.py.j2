@@ -1,0 +1,175 @@
+"""
+Auto-generated Pydantic models from Business OS ontology.
+"""
+
+from typing import List, Optional, Dict, Any, Union
+from pydantic import BaseModel, Field, validator
+from datetime import datetime
+from enum import Enum
+
+
+{% for segment_name, segment in segments.items() %}
+class {{ segment_name }}(BaseModel):
+    """{{ segment_name }} customer segment."""
+    
+    {% for prop_name, prop_def in segment.properties.items() %}
+    {% if prop_def.startswith('enum[') %}
+    {{ prop_name }}: str = Field(..., description="{{ prop_name }}")
+    {% elif prop_def.startswith('list[') %}
+    {{ prop_name }}: List[str] = Field(default_factory=list, description="{{ prop_name }}")
+    {% elif prop_def.startswith('range(') %}
+    {{ prop_name }}: float = Field(..., description="{{ prop_name }}")
+    {% elif prop_def == 'boolean' %}
+    {{ prop_name }}: bool = Field(..., description="{{ prop_name }}")
+    {% elif prop_def == 'int' %}
+    {{ prop_name }}: int = Field(..., description="{{ prop_name }}")
+    {% elif prop_def == 'float' %}
+    {{ prop_name }}: float = Field(..., description="{{ prop_name }}")
+    {% elif prop_def == 'datetime' %}
+    {{ prop_name }}: datetime = Field(..., description="{{ prop_name }}")
+    {% else %}
+    {{ prop_name }}: str = Field(..., description="{{ prop_name }}")
+    {% endif %}
+    {% endfor %}
+    
+    {% if segment.constraints %}
+    # Business constraints
+    {% for constraint in segment.constraints %}
+    # {{ constraint }}
+    {% endfor %}
+    {% endif %}
+    
+    {% for prop_name, prop_def in segment.properties.items() %}
+    {% if prop_def.startswith('enum[') %}
+    @validator('{{ prop_name }}')
+    def validate_{{ prop_name }}(cls, v):
+        allowed_values = [{{ prop_def[5:-1] }}]
+        if v not in allowed_values:
+            raise ValueError(f"{{ prop_name }} must be one of {allowed_values}")
+        return v
+    {% elif prop_def.startswith('range(') %}
+    @validator('{{ prop_name }}')
+    def validate_{{ prop_name }}(cls, v):
+        {% set range_def = prop_def[6:-1] %}
+        {% set min_val, max_val = range_def.split(', ') %}
+        min_val = {{ min_val }}
+        max_val = {{ max_val }}
+        if not (min_val <= v <= max_val):
+            raise ValueError(f"{{ prop_name }} must be between {min_val} and {max_val}")
+        return v
+    {% endif %}
+    {% endfor %}
+
+{% endfor %}
+
+{% for campaign_name, campaign in campaigns.items() %}
+class {{ campaign_name }}(BaseModel):
+    """{{ campaign_name }} marketing campaign."""
+    
+    # Metadata
+    owner_team: str = Field(..., description="Owner team")
+    campaign_type: str = Field(..., description="Campaign type")
+    target_audience: List[str] = Field(..., description="Target audience")
+    
+    # Components
+    {% for component_name, component in campaign.components.items() %}
+    {{ component_name }}: Dict[str, Any] = Field(..., description="{{ component_name }} component")
+    {% endfor %}
+    
+    {% if campaign.constraints %}
+    # Business constraints
+    {% for constraint in campaign.constraints %}
+    # {{ constraint }}
+    {% endfor %}
+    {% endif %}
+
+{% endfor %}
+
+{% if lead_scoring %}
+class LeadScoringInput(BaseModel):
+    """Input for lead scoring model."""
+    
+    {% for input_name, input_def in lead_scoring.inputs.items() %}
+    {% if input_def.startswith('list[') %}
+    {{ input_name }}: List[Dict[str, Any]] = Field(..., description="{{ input_name }}")
+    {% elif input_def == 'boolean' %}
+    {{ input_name }}: bool = Field(..., description="{{ input_name }}")
+    {% elif input_def == 'int' %}
+    {{ input_name }}: int = Field(..., description="{{ input_name }}")
+    {% elif input_def == 'float' %}
+    {{ input_name }}: float = Field(..., description="{{ input_name }}")
+    {% else %}
+    {{ input_name }}: str = Field(..., description="{{ input_name }}")
+    {% endif %}
+    {% endfor %}
+
+
+class LeadScoringOutput(BaseModel):
+    """Output from lead scoring model."""
+    
+    {% for output_name, output_def in lead_scoring.output.items() %}
+    {% if output_def.startswith('int(') %}
+    {{ output_name }}: int = Field(..., description="{{ output_name }}")
+    {% elif output_def.startswith('enum[') %}
+    {{ output_name }}: str = Field(..., description="{{ output_name }}")
+    {% elif output_def.startswith('string(') %}
+    {{ output_name }}: str = Field(..., description="{{ output_name }}")
+    {% elif output_def.startswith('float(') %}
+    {{ output_name }}: float = Field(..., description="{{ output_name }}")
+    {% else %}
+    {{ output_name }}: str = Field(..., description="{{ output_name }}")
+    {% endif %}
+    {% endfor %}
+
+
+class LeadScoringModel(BaseModel):
+    """Lead scoring model."""
+    
+    inputs: LeadScoringInput
+    output: LeadScoringOutput
+    
+    {% if lead_scoring.weights %}
+    weights: Dict[str, float] = Field(..., description="Scoring weights")
+    {% endif %}
+    
+    {% if lead_scoring.thresholds %}
+    thresholds: Dict[str, int] = Field(..., description="Scoring thresholds")
+    {% endif %}
+    
+    {% if lead_scoring.special_rules %}
+    special_rules: List[str] = Field(default_factory=list, description="Special scoring rules")
+    {% endif %}
+
+{% endif %}
+
+# Type aliases for common types
+{% for type_name, type_def in types.items() %}
+{% if type_def.properties %}
+class {{ type_name }}(BaseModel):
+    """{{ type_name }} type definition."""
+    
+    {% for prop_name, prop_def in type_def.properties.items() %}
+    {% if prop_def.startswith('enum[') %}
+    {{ prop_name }}: str = Field(..., description="{{ prop_name }}")
+    {% elif prop_def.startswith('list[') %}
+    {{ prop_name }}: List[str] = Field(default_factory=list, description="{{ prop_name }}")
+    {% elif prop_def == 'boolean' %}
+    {{ prop_name }}: bool = Field(..., description="{{ prop_name }}")
+    {% elif prop_def == 'int' %}
+    {{ prop_name }}: int = Field(..., description="{{ prop_name }}")
+    {% elif prop_def == 'float' %}
+    {{ prop_name }}: float = Field(..., description="{{ prop_name }}")
+    {% else %}
+    {{ prop_name }}: str = Field(..., description="{{ prop_name }}")
+    {% endif %}
+    {% endfor %}
+    
+    {% if type_def.constraints %}
+    # Business constraints
+    {% for constraint in type_def.constraints %}
+    # {{ constraint }}
+    {% endfor %}
+    {% endif %}
+
+{% endif %}
+{% endfor %} 

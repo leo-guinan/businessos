@@ -1,0 +1,185 @@
+campaigns:
+  ProductLaunchCampaign:
+    metadata:
+      owner_team: "product_marketing"
+      review_required: ["legal", "brand", "product"]
+      campaign_type: "product_launch"
+      target_audience: list[CustomerSegment]
+      budget_range: range(10K, 500K)
+      timeline: "4-8 weeks"
+    components:
+      announcement:
+        channels: list[enum["blog", "email", "social", "pr", "webinar", "event"]]
+        assets: list[ContentAsset]
+        timing: temporal_sequence
+        success_metrics: ["reach", "engagement", "website_traffic", "signups"]
+      enablement:
+        internal_training: SalesEnablement
+        partner_materials: PartnerKit
+        customer_communications: CustomerAnnouncement
+        success_metrics: ["sales_readiness", "partner_activation", "customer_awareness"]
+      measurement:
+        success_metrics: list[KPI]
+        attribution_model: enum["first_touch", "multi_touch", "w_shaped", "time_decay"]
+        tracking_period: "90 days"
+    constraints:
+      - "PR must be approved 48h before any other channel"
+      - "Sales enablement must be complete before external launch"
+      - "Customer communications must be sent 24h before public announcement"
+      - "All assets must follow brand guidelines"
+
+  LeadGenerationCampaign:
+    metadata:
+      owner_team: "demand_generation"
+      review_required: ["brand"]
+      campaign_type: "lead_generation"
+      target_audience: list[CustomerSegment]
+      budget_range: range(5K, 100K)
+      timeline: "2-4 weeks"
+    components:
+      content_creation:
+        content_types: list[enum["whitepaper", "ebook", "webinar", "case_study", "infographic"]]
+        target_keywords: list[string]
+        content_assets: list[ContentAsset]
+        success_metrics: ["content_views", "downloads", "time_on_page"]
+      distribution:
+        channels: list[enum["email", "social", "paid_search", "content_syndication", "partners"]]
+        targeting_criteria: list[TargetingCriteria]
+        budget_allocation: BudgetAllocation
+        success_metrics: ["reach", "clicks", "cost_per_click", "conversion_rate"]
+      lead_management:
+        lead_scoring: LeadScoringModel
+        nurture_sequences: list[NurtureSequence]
+        sales_handoff: SalesHandoffProcess
+        success_metrics: ["lead_volume", "lead_quality", "sales_acceptance_rate"]
+    constraints:
+      - "Content must be gated for lead capture"
+      - "Lead scoring must be implemented before campaign launch"
+      - "Sales team must be notified within 1 hour of lead qualification"
+
+  CustomerRetentionCampaign:
+    metadata:
+      owner_team: "customer_success"
+      review_required: ["customer_success"]
+      campaign_type: "retention"
+      target_audience: list[CustomerSegment]
+      budget_range: range(1K, 50K)
+      timeline: "ongoing"
+    components:
+      health_monitoring:
+        health_indicators: list[HealthIndicator]
+        risk_assessment: RiskAssessmentModel
+        early_warning_system: EarlyWarningSystem
+        success_metrics: ["health_score", "risk_identification", "intervention_time"]
+      engagement_programs:
+        onboarding_sequence: OnboardingSequence
+        feature_adoption: FeatureAdoptionProgram
+        success_planning: SuccessPlanningProcess
+        success_metrics: ["adoption_rate", "feature_usage", "success_plan_completion"]
+      renewal_preparation:
+        renewal_timeline: RenewalTimeline
+        value_demonstration: ValueDemonstration
+        expansion_opportunities: ExpansionOpportunities
+        success_metrics: ["renewal_rate", "expansion_rate", "customer_satisfaction"]
+    constraints:
+      - "Health monitoring must be continuous"
+      - "Interventions must be personalized to customer segment"
+      - "Renewal preparation must start 90 days before contract end"
+
+  BrandAwarenessCampaign:
+    metadata:
+      owner_team: "brand_marketing"
+      review_required: ["brand", "legal"]
+      campaign_type: "brand_awareness"
+      target_audience: list[CustomerSegment]
+      budget_range: range(10K, 200K)
+      timeline: "3-6 months"
+    components:
+      brand_positioning:
+        messaging_framework: MessagingFramework
+        visual_identity: VisualIdentity
+        tone_of_voice: ToneOfVoice
+        success_metrics: ["brand_recognition", "message_recall", "brand_sentiment"]
+      content_strategy:
+        thought_leadership: ThoughtLeadershipContent
+        educational_content: EducationalContent
+        brand_stories: BrandStories
+        success_metrics: ["content_engagement", "share_of_voice", "influence_score"]
+      media_planning:
+        channels: list[enum["pr", "social", "events", "sponsorships", "influencers"]]
+        media_buy: MediaBuy
+        event_participation: EventParticipation
+        success_metrics: ["reach", "impressions", "brand_lift", "share_of_voice"]
+    constraints:
+      - "All messaging must align with brand guidelines"
+      - "PR activities must be coordinated across all channels"
+      - "Brand metrics must be measured before and after campaign"
+
+# Common types used across campaigns
+types:
+  ContentAsset:
+    properties:
+      asset_type: enum["whitepaper", "ebook", "webinar", "video", "infographic", "case_study", "blog_post"]
+      format: enum["pdf", "mp4", "png", "jpg", "html", "markdown"]
+      target_audience: list[CustomerSegment]
+      keywords: list[string]
+      call_to_action: string
+      gated: boolean
+    constraints:
+      - "Gated content must have clear value proposition"
+      - "All assets must include call-to-action"
+
+  TargetingCriteria:
+    properties:
+      company_size: list[enum["1-10", "11-50", "51-200", "200-1000", "1000-5000", "5000+"]]
+      industry: list[Industry]
+      job_title: list[JobTitle]
+      behavior: list[enum["website_visitor", "content_downloader", "demo_attendee", "trial_user"]]
+      location: list[Geography]
+    constraints:
+      - "Targeting must be specific enough for effective delivery"
+      - "Audience size must be sufficient for campaign goals"
+
+  BudgetAllocation:
+    properties:
+      total_budget: float
+      channel_allocation: dict[Channel, float]
+      timeline_allocation: dict[Week, float]
+      performance_adjustment: boolean
+    constraints:
+      - "Total allocation must equal 100%"
+      - "Performance adjustment must have clear criteria"
+
+  LeadScoringModel:
+    properties:
+      demographic_score: int(0, 100)
+      behavioral_score: int(0, 100)
+      engagement_score: int(0, 100)
+      fit_score: int(0, 100)
+      total_score: int(0, 100)
+      qualification_threshold: int(0, 100)
+    constraints:
+      - "Total score must be sum of individual scores"
+      - "Qualification threshold must be clearly defined"
+
+  HealthIndicator:
+    properties:
+      metric_name: string
+      current_value: float
+      threshold: float
+      trend: enum["improving", "stable", "declining"]
+      weight: float(0, 1)
+    constraints:
+      - "Weight must sum to 1.0 across all indicators"
+      - "Thresholds must be based on historical data"
+
+  MessagingFramework:
+    properties:
+      value_proposition: string
+      key_messages: list[string]
+      proof_points: list[string]
+      target_audience: list[CustomerSegment]
+      competitive_positioning: string
+    constraints:
+      - "Key messages must support value proposition"
+      - "Proof points must be verifiable" 

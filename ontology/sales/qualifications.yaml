@@ -1,0 +1,229 @@
+lead_scoring:
+  inputs:
+    demographic:
+      company_size: int
+      industry: Industry
+      title: ContactTitle
+      location: Geography
+      annual_revenue: float
+      employee_count: int
+    behavioral:
+      website_visits: list[PageVisit]
+      content_downloads: list[Asset]
+      email_engagement: EmailMetrics
+      demo_attendance: boolean
+      trial_usage: TrialMetrics
+      event_attendance: list[Event]
+    intent:
+      search_keywords: list[string]
+      competitor_research: boolean
+      pricing_page_visits: int
+      feature_page_visits: list[string]
+      contact_form_submissions: int
+      phone_calls: int
+    fit:
+      use_case_alignment: float(0, 1)
+      technical_requirements: list[string]
+      budget_range: enum["under_10k", "10k_50k", "50k_100k", "100k_500k", "500k+"]
+      timeline: enum["immediate", "quarter", "year", "exploring"]
+      decision_maker_involved: boolean
+  output:
+    score: int(0, 100)
+    tier: enum["hot", "warm", "cold"]
+    recommended_action: enum["call_now", "nurture", "wait", "disqualify"]
+    reasoning: string(max=200)
+    confidence: float(0, 1)
+
+qualification_criteria:
+  BANT:
+    budget:
+      criteria: enum["confirmed", "likely", "unknown", "none"]
+      amount: float
+      authority: boolean
+      timeline: enum["immediate", "quarter", "year", "unknown"]
+    authority:
+      decision_maker: boolean
+      influence_level: enum["decision_maker", "influencer", "user", "none"]
+      access_to_decision_maker: boolean
+    need:
+      pain_point_identified: boolean
+      current_solution: string
+      urgency: enum["critical", "important", "nice_to_have", "none"]
+      impact: enum["high", "medium", "low", "unknown"]
+    timeline:
+      purchase_timeline: enum["immediate", "quarter", "year", "unknown"]
+      implementation_timeline: enum["immediate", "quarter", "year", "unknown"]
+      budget_cycle: enum["current", "next", "unknown"]
+
+  CHAMP:
+    challenges:
+      primary_challenge: string
+      secondary_challenges: list[string]
+      impact_on_business: enum["high", "medium", "low"]
+      urgency: enum["critical", "important", "nice_to_have"]
+    authority:
+      decision_maker: boolean
+      influence_level: enum["decision_maker", "influencer", "user"]
+      organizational_level: enum["executive", "director", "manager", "individual"]
+    money:
+      budget_confirmed: boolean
+      budget_amount: float
+      budget_authority: boolean
+      budget_timeline: enum["current", "next", "unknown"]
+    prioritization:
+      project_priority: enum["high", "medium", "low"]
+      competing_projects: list[string]
+      decision_criteria: list[string]
+
+  GPCTBA:
+    goals:
+      primary_goal: string
+      secondary_goals: list[string]
+      success_metrics: list[string]
+      timeline: enum["immediate", "quarter", "year"]
+    plans:
+      current_plan: string
+      plan_gaps: list[string]
+      implementation_approach: string
+    challenges:
+      primary_challenge: string
+      challenge_impact: enum["high", "medium", "low"]
+      challenge_urgency: enum["critical", "important", "nice_to_have"]
+    timeline:
+      decision_timeline: enum["immediate", "quarter", "year"]
+      implementation_timeline: enum["immediate", "quarter", "year"]
+    budget:
+      budget_confirmed: boolean
+      budget_amount: float
+      budget_authority: boolean
+    authority:
+      decision_maker: boolean
+      influence_level: enum["decision_maker", "influencer", "user"]
+
+lead_scoring_models:
+  enterprise_scoring:
+    weights:
+      demographic: 0.25
+      behavioral: 0.30
+      intent: 0.25
+      fit: 0.20
+    thresholds:
+      hot: 80
+      warm: 60
+      cold: 40
+    special_rules:
+      - "Enterprise leads with confirmed budget get +20 points"
+      - "Leads with executive decision maker get +15 points"
+      - "Leads with immediate timeline get +10 points"
+
+  startup_scoring:
+    weights:
+      demographic: 0.20
+      behavioral: 0.35
+      intent: 0.30
+      fit: 0.15
+    thresholds:
+      hot: 75
+      warm: 55
+      cold: 35
+    special_rules:
+      - "Startup leads with technical founder get +15 points"
+      - "Leads with high trial usage get +20 points"
+      - "Leads with immediate urgency get +15 points"
+
+  smb_scoring:
+    weights:
+      demographic: 0.30
+      behavioral: 0.25
+      intent: 0.25
+      fit: 0.20
+    thresholds:
+      hot: 70
+      warm: 50
+      cold: 30
+    special_rules:
+      - "SMB leads with owner-operator get +10 points"
+      - "Leads with confirmed budget get +15 points"
+      - "Leads with immediate need get +10 points"
+
+disqualification_criteria:
+  hard_disqualifiers:
+    - "Company size outside target range"
+    - "Industry not supported"
+    - "No budget authority"
+    - "Timeline beyond 12 months"
+    - "Competitor customer with long-term contract"
+  
+  soft_disqualifiers:
+    - "Low engagement with content"
+    - "No decision maker involvement"
+    - "Unclear use case"
+    - "Budget below minimum"
+    - "Technical requirements not met"
+
+nurture_criteria:
+  nurture_tracks:
+    awareness:
+      criteria: "score < 40 and no recent engagement"
+      content_types: ["educational", "thought_leadership", "industry_insights"]
+      frequency: "weekly"
+      duration: "3 months"
+    
+    consideration:
+      criteria: "score 40-60 and some engagement"
+      content_types: ["case_studies", "product_demos", "comparison_guides"]
+      frequency: "bi-weekly"
+      duration: "2 months"
+    
+    evaluation:
+      criteria: "score 60-80 and high engagement"
+      content_types: ["pricing_guides", "implementation_guides", "reference_calls"]
+      frequency: "weekly"
+      duration: "1 month"
+
+# Common types
+types:
+  PageVisit:
+    properties:
+      page_url: string
+      time_spent: int
+      timestamp: datetime
+      referrer: string
+      user_agent: string
+    constraints:
+      - "Time spent must be positive"
+      - "Timestamp must be in the past"
+
+  EmailMetrics:
+    properties:
+      open_rate: float(0, 1)
+      click_rate: float(0, 1)
+      reply_rate: float(0, 1)
+      unsubscribe_rate: float(0, 1)
+      last_engagement: datetime
+    constraints:
+      - "All rates must be between 0 and 1"
+      - "Last engagement must be in the past"
+
+  TrialMetrics:
+    properties:
+      trial_start_date: datetime
+      trial_end_date: datetime
+      features_used: list[string]
+      usage_frequency: enum["daily", "weekly", "monthly", "never"]
+      user_count: int
+      data_imported: boolean
+    constraints:
+      - "Trial end date must be after start date"
+      - "User count must be positive"
+
+  Event:
+    properties:
+      event_name: string
+      event_type: enum["webinar", "conference", "meetup", "workshop"]
+      attendance_date: datetime
+      engagement_level: enum["attended", "registered", "no_show"]
+      follow_up_completed: boolean
+    constraints:
+      - "Attendance date must be in the past"
+      - "Follow up must be completed within 48 hours" 

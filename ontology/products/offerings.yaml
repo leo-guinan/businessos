@@ -1,0 +1,78 @@
+offerings:
+  SaaSPlatform:
+    properties:
+      name: string
+      description: string
+      category: enum["platform", "tool", "service", "integration"]
+      pricing_model: enum["subscription", "usage_based", "one_time", "freemium"]
+      target_segments: list[CustomerSegment]
+      features: list[Feature]
+      integrations: list[Integration]
+      compliance: list[enum["soc2", "hipaa", "gdpr", "fedramp"]]
+    constraints:
+      - "Enterprise offerings must have SOC2 compliance"
+      - "Healthcare offerings must have HIPAA compliance"
+      - "Freemium offerings must have clear upgrade path"
+
+  ProfessionalServices:
+    properties:
+      service_type: enum["consulting", "implementation", "training", "support"]
+      duration: enum["hours", "days", "weeks", "months"]
+      team_size: range(1, 10)
+      deliverables: list[string]
+      prerequisites: list[string]
+      success_metrics: list[KPI]
+    constraints:
+      - "Implementation services require discovery phase"
+      - "Training services must include materials"
+      - "Support services must have SLA defined"
+
+  CustomSolution:
+    properties:
+      scope: string
+      complexity: enum["simple", "medium", "complex", "enterprise"]
+      timeline: range(1, 52)
+      team_requirements: list[Role]
+      technology_stack: list[Technology]
+      maintenance_plan: MaintenancePlan
+    constraints:
+      - "Complex solutions require architecture review"
+      - "Enterprise solutions must include security review"
+      - "All solutions must have maintenance plan"
+
+# Common types
+types:
+  Feature:
+    properties:
+      name: string
+      description: string
+      category: enum["core", "advanced", "enterprise", "experimental"]
+      availability: enum["available", "beta", "coming_soon", "deprecated"]
+      dependencies: list[string]
+      documentation_url: string
+    constraints:
+      - "Beta features must have clear limitations"
+      - "Deprecated features must have migration path"
+
+  Integration:
+    properties:
+      name: string
+      type: enum["api", "webhook", "sdk", "connector"]
+      status: enum["active", "beta", "deprecated"]
+      documentation_url: string
+      rate_limits: RateLimits
+      authentication: AuthenticationMethod
+    constraints:
+      - "API integrations must have rate limits defined"
+      - "All integrations must have documentation"
+
+  MaintenancePlan:
+    properties:
+      type: enum["basic", "standard", "premium", "enterprise"]
+      response_time: enum["4h", "8h", "24h", "48h"]
+      availability: enum["business_hours", "24_7", "custom"]
+      included_services: list[string]
+      escalation_path: EscalationPath
+    constraints:
+      - "Enterprise plans must have 24/7 availability"
+      - "All plans must have escalation path defined" 

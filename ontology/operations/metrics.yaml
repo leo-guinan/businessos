@@ -1,0 +1,177 @@
+metrics:
+  CustomerMetrics:
+    properties:
+      customer_acquisition_cost: float
+      customer_lifetime_value: float
+      churn_rate: float
+      net_promoter_score: int
+      customer_satisfaction_score: float
+      time_to_value: int
+      feature_adoption_rate: float
+      support_ticket_volume: int
+    constraints:
+      - "CAC must be positive"
+      - "CLV must be greater than CAC"
+      - "Churn rate must be between 0 and 1"
+      - "NPS must be between -100 and 100"
+
+  RevenueMetrics:
+    properties:
+      monthly_recurring_revenue: float
+      annual_recurring_revenue: float
+      average_revenue_per_user: float
+      revenue_growth_rate: float
+      expansion_revenue: float
+      contraction_revenue: float
+      gross_revenue_retention: float
+      net_revenue_retention: float
+    constraints:
+      - "MRR must be positive"
+      - "ARR must be 12 times MRR"
+      - "Growth rate must be between -1 and 10"
+      - "Retention rates must be between 0 and 1"
+
+  SalesMetrics:
+    properties:
+      sales_cycle_length: int
+      win_rate: float
+      average_deal_size: float
+      sales_velocity: float
+      pipeline_velocity: float
+      lead_conversion_rate: float
+      opportunity_to_win_rate: float
+      quota_attainment: float
+    constraints:
+      - "Sales cycle must be positive"
+      - "Win rate must be between 0 and 1"
+      - "Deal size must be positive"
+      - "Quota attainment must be between 0 and 2"
+
+  MarketingMetrics:
+    properties:
+      cost_per_lead: float
+      lead_to_opportunity_rate: float
+      marketing_qualified_leads: int
+      sales_qualified_leads: int
+      content_engagement_rate: float
+      email_open_rate: float
+      email_click_rate: float
+      website_conversion_rate: float
+    constraints:
+      - "CPL must be positive"
+      - "Conversion rates must be between 0 and 1"
+      - "Email rates must be between 0 and 1"
+
+  ProductMetrics:
+    properties:
+      daily_active_users: int
+      monthly_active_users: int
+      user_engagement_score: float
+      feature_usage_rate: float
+      session_duration: int
+      page_load_time: float
+      error_rate: float
+      uptime_percentage: float
+    constraints:
+      - "User counts must be non-negative"
+      - "Engagement score must be between 0 and 1"
+      - "Uptime must be between 0 and 100"
+      - "Error rate must be between 0 and 1"
+
+  OperationalMetrics:
+    properties:
+      support_response_time: int
+      support_resolution_time: int
+      customer_effort_score: int
+      first_call_resolution_rate: float
+      employee_satisfaction_score: float
+      employee_retention_rate: float
+      operational_efficiency_score: float
+      cost_per_support_ticket: float
+    constraints:
+      - "Response times must be positive"
+      - "Resolution rates must be between 0 and 1"
+      - "Satisfaction scores must be between 1 and 10"
+      - "Retention rate must be between 0 and 1"
+
+# KPI definitions
+kpis:
+  GrowthKPI:
+    properties:
+      metric_name: string
+      target_value: float
+      current_value: float
+      timeframe: enum["daily", "weekly", "monthly", "quarterly", "yearly"]
+      trend: enum["improving", "stable", "declining"]
+      owner: string
+      calculation_method: string
+    constraints:
+      - "Target value must be realistic"
+      - "Current value must be measurable"
+      - "Owner must be assigned"
+
+  HealthKPI:
+    properties:
+      metric_name: string
+      threshold_min: float
+      threshold_max: float
+      current_value: float
+      status: enum["healthy", "warning", "critical"]
+      last_updated: datetime
+      alert_recipients: list[string]
+    constraints:
+      - "Threshold min must be less than max"
+      - "Status must be updated regularly"
+      - "Alert recipients must be defined"
+
+# Dashboard configurations
+dashboards:
+  ExecutiveDashboard:
+    metrics:
+      - "monthly_recurring_revenue"
+      - "customer_acquisition_cost"
+      - "customer_lifetime_value"
+      - "churn_rate"
+      - "net_promoter_score"
+    refresh_rate: "daily"
+    audience: list[enum["ceo", "cfo", "cto", "vp_sales", "vp_marketing"]]
+
+  SalesDashboard:
+    metrics:
+      - "sales_cycle_length"
+      - "win_rate"
+      - "average_deal_size"
+      - "pipeline_velocity"
+      - "quota_attainment"
+    refresh_rate: "real_time"
+    audience: list[enum["sales_rep", "sales_manager", "vp_sales"]]
+
+  MarketingDashboard:
+    metrics:
+      - "cost_per_lead"
+      - "lead_to_opportunity_rate"
+      - "marketing_qualified_leads"
+      - "content_engagement_rate"
+      - "website_conversion_rate"
+    refresh_rate: "daily"
+    audience: list[enum["marketing_manager", "demand_generation", "vp_marketing"]]
+
+  ProductDashboard:
+    metrics:
+      - "daily_active_users"
+      - "user_engagement_score"
+      - "feature_usage_rate"
+      - "session_duration"
+      - "error_rate"
+    refresh_rate: "hourly"
+    audience: list[enum["product_manager", "engineer", "cto"]]
+
+  SupportDashboard:
+    metrics:
+      - "support_response_time"
+      - "support_resolution_time"
+      - "customer_effort_score"
+      - "first_call_resolution_rate"
+      - "cost_per_support_ticket"
+    refresh_rate: "real_time"
+    audience: list[enum["support_agent", "support_manager", "vp_customer_success"]] 
